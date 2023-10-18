@@ -7,7 +7,7 @@ const Card = ({ question, topic, defaultAnswer, defaultFeedback, sendScoreToPare
     const [score, setScore] = useState(0);
 
 
-    const REACT_APP_API_KEY = "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";
+    const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY;
     
     const handleSendDataToParent = () => {
       score ? sendScoreToParent(score) : sendScoreToParent(0);
