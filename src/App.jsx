@@ -201,8 +201,11 @@ function App() {
 
         <div className="relevancy-topics">
           {relevantTopics.map((topic, index) => (
-            <div className="topic" key={index} onClick={() => removeTopic(index)}>
+            <div className="topic" key={index} >
               {topic} : {topicDictionary[topic]}
+              <button className="remove-button" onClick={() => removeTopic(index)}>
+                X
+              </button>
             </div>
           ))}
         </div>

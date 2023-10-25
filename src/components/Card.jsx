@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import Chat from './Chat';
 
 const Card = ({ question, topic, defaultAnswer, defaultFeedback, sendScoreToParent, childTopic }) => {
     const [answer, setAnswer] = useState(defaultAnswer);
     const [feedback, setFeedback] = useState(defaultFeedback);
     const [loading, setLoading] = useState(false);
     const [score, setScore] = useState(0);
+    const [chat, setChat] = useState(false);
 
 
     const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY;
@@ -16,7 +18,7 @@ const Card = ({ question, topic, defaultAnswer, defaultFeedback, sendScoreToPare
     const getFeedback = async () => {
         setLoading(true);
         const feedbackPrompt = `
-        I wrote a few words answering the following ${question}.
+        I answered the following ${question}.
         I wrote: ${answer}
 
         You are a gentle, supportive teacher who provides feedback and seeks out what was right about the student's answer.
@@ -25,15 +27,9 @@ const Card = ({ question, topic, defaultAnswer, defaultFeedback, sendScoreToPare
         The feedback goes as follows:
 
         First sentence:
-          If the answer is mostly or more than that correct, INCLUDE "That is correct!"
-          If the answer is VERY incorrect, INCLUDE "That is incorrect."
-          If the answer contains phrases such as "I don't know" or "Not sure", and doesn't try to answer the question, INCLUDE "It is okay to not know the answer."
-          If the user made an attempt that includes some right elements INCLUDE "That is partially correct."
-
-        Second sentence:
           One sentence on what the user did well. Relate it to ${childTopic}. 5-10 words.
 
-        Third sentence (Optional):
+        Second sentence (Optional):
           One short sentence on what would make a great answer, especially in relation to ${childTopic}. 5-10 words. This is optional and not necessary if the answer is mostly correct.
 
 
@@ -57,7 +53,7 @@ const Card = ({ question, topic, defaultAnswer, defaultFeedback, sendScoreToPare
             messages: [
                 { role: 'system', content: feedbackPrompt },
             ],
-            temperature: 0.8
+            temperature: 1.2
         };
 
         try {
@@ -72,31 +68,18 @@ const Card = ({ question, topic, defaultAnswer, defaultFeedback, sendScoreToPare
 
             const data = await response.json();
             setFeedback(data.choices[0].message.content);
-            setScore(parseFeedback(data.choices[0].message.content));
-            
-            console.log(score)
             setLoading(false);
         } catch (error) {
             console.log(error);
         }
     };
+  
+  const handleScore = (value) => {
+      setScore(value);
+  }
 
-  const parseFeedback = (output) => {
-
-    const correct = RegExp(`That is correct!`).exec(output);
-    const incorrect = RegExp(`That is incorrect.`).exec(output);
-    const unknown = RegExp(`It is okay to not know the answer.`).exec(output);
-    const partial = RegExp(`That is partially correct.`).exec(output);
-
-    if (correct) {
-      return 2;
-    } else if (partial) {
-      return 1;
-    } else if (incorrect || unknown) {
-      return 0;
-    } else {
-      return 0;
-    }
+  const activateChat = () => {
+    setChat(true);
   }
 
   useEffect(() => {
@@ -111,6 +94,15 @@ const Card = ({ question, topic, defaultAnswer, defaultFeedback, sendScoreToPare
     handleSendDataToParent();
   }, [feedback])
 
+  useEffect(() => {
+    handleSendDataToParent();
+}, [score]);
+
+  // use useeffect to set chat to empty when the question changes
+  useEffect(() => {
+    setChat(false);
+  } , [question, feedback])
+
     return (
         <div className="card">
             <h2>Question: {question}</h2>
@@ -123,7 +115,42 @@ const Card = ({ question, topic, defaultAnswer, defaultFeedback, sendScoreToPare
             {loading ? null : 
             <button className="get-feedback-button" onClick={() => getFeedback(topic)}>Get feedback</button>}
             <div className="answer-box">
-                {loading ? "Loading..." : feedback}
+                {loading ? "Loading..." : (
+                  <>
+                    {feedback}
+                  
+                  </>
+                )}
+                {feedback && (
+                      <>
+                        <br/>
+                        <button className="discuss-button" onClick={() => activateChat()}>
+                          I want to discuss feedback
+                        </button>
+                      </>
+                    )}
+                {chat && (
+                  <Chat
+                    question={question}
+                    answer={answer}
+                    feedback={feedback}
+                    childTopic={childTopic}
+                  />
+                )}
+
+              {feedback && (
+                          <div className="self-eval-box">
+                            <h3>Now that you understand what was expected, how do you think you did?</h3>
+
+                            <div className='self-evaluation'>
+                                <button className="eval-button" onClick={() => handleScore(2)}>I got it correct</button>
+                                <button className="eval-button" onClick={() => handleScore(1)}>I got it partially correct</button>
+                                <button className="eval-button" onClick={() => handleScore(0)}>I got it wrong</button>
+                                <button className="eval-button" onClick={() => handleScore(0)}>I did not know the answer</button>
+                            </div>
+                            </div>
+                      )}
+
             </div>
         </div>
     );
