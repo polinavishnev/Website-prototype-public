@@ -94,6 +94,12 @@ const Card = ({ question, topic, defaultAnswer, defaultFeedback, sendScoreToPare
     handleSendDataToParent();
   }, [feedback])
 
+
+  // use useeffect to set chat to empty when the question changes
+  useEffect(() => {
+    setChat(false);
+  } , [question, feedback])
+
   useEffect(() => {
     handleSendDataToParent();
 }, [score]);
