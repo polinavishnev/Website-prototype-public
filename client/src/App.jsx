@@ -7,6 +7,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 
 function App() {
+  const API_URL = process.env.NODE_ENV === 'production' ? 'https://fredngo-cp-w103-lab9-server.up.railway.app' : 'http://localhost:3000'
+
   const [questions, setQuestions] = useState([]);
   const [relevantTopics, setRelevantTopics] = useState([]);
   const [topic, setTopic] = useState("");
