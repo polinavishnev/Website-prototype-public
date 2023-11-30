@@ -1,19 +1,18 @@
-import './App.css'
-import Card from './components/Card'
-import Upload from './components/Upload'
+import '../App.css'
+import Card from './Card'
+import Upload from './Upload'
 import { useEffect, useState, useMemo } from 'react';
-import PDFViewer from './components/PDFViewer';
+import PDFViewer from './PDFViewer';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 
-function App() {
+function WholePage() {
   const [questions, setQuestions] = useState([]);
   const [relevantTopics, setRelevantTopics] = useState([]);
   const [topic, setTopic] = useState("");
   const [topicDictionary, setTopicDictionary] = useState({});
   const [questionIndex, setQuestionIndex] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [uploadedTopics, setUploadedTopics] = useState([]);
   
   const num_questions = 5;
 
@@ -34,7 +33,7 @@ function App() {
     return Array(num_questions)
       .fill(null)
       .map(() => getTopic());
-  }, [num_questions, relevantTopics, topicDictionary]);
+  }, [num_questions, relevantTopics]);
 
   const getQuestions = async () => {
     setLoading(true);
@@ -43,12 +42,11 @@ function App() {
     const startPrompt = `Give me ${num_questions} about the topics provided later. One topic: One question. It's fine if topics repeat.
     Each question should be formatted to be answered in a few words or a sentence at most.
     `
-    console.log(generatedTopics, 'these are the generated topics')
+    console.log(generatedTopics)
     questionPrompts.push(startPrompt);
     for (let i = 1; i <= num_questions; i++) {
     
-      const questionTopic = generatedTopics[i - 1]['topic'];
-      console.log(questionTopic, 'this is the question topic')
+      const questionTopic = generatedTopics[i - 1];
       questionPrompts.push(`Topic ${i}: [${questionTopic}]. Question ${i}: [one question ${i} about topic ${questionTopic} here]`);
     }
     console.log(questionPrompts)
@@ -100,11 +98,13 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (topic.trim() !== "") {
-      setRelevantTopics([...relevantTopics, { topic, score: 0 }]);
+      setRelevantTopics([...relevantTopics, topic]);
       setTopicDictionary({ ...topicDictionary, [topic]: 0 });
       setTopic("");
-    } else {
-      setRelevantTopics([...relevantTopics, { topic: "computer science", score: 0 }]);
+    }
+    else {
+      // assign the topic to be computer science
+      setRelevantTopics([...relevantTopics, "computer science"]);
       setTopicDictionary({ ...topicDictionary, ["computer science"]: 0 });
       setTopic("");
     }
@@ -136,25 +136,12 @@ function App() {
     });
     console.log(childTopic, score);
   };
-  const handleUploadFinish = (topics) => {
-    // Add the uploaded topics to relevantTopics with a score of 0
-    setRelevantTopics((prevTopics) => [
-      ...prevTopics,
-      ...topics.map((topic) => ({ topic, score: 0 })),
-    ]);
-    setTopicDictionary((prevTopicDict) => {
-      const newTopicDict = { ...prevTopicDict };
-      topics.forEach((topic) => {
-        newTopicDict[topic] = 0;
-      });
-      return newTopicDict;
-    });
-  };
-  return (
+  
 
+  return (
             <div className="whole-page">
               <div className="header">
-                <Upload onUploadFinish={handleUploadFinish} />
+                <Upload />
               </div>
 
               <div className="questions-answers">
@@ -221,26 +208,18 @@ function App() {
                 </form>
 
                 <div className="relevancy-topics">
-                {relevantTopics.map((item, index) => (
-                  <div className="topic" key={index}>
-                    <div>{item.topic}</div>
-                    <button className="remove-button" onClick={() => removeTopic(index)}>
-                      X
-                    </button>
-                  </div>
-                ))}
-                    <div className="uploaded-topics-sidebar">
-                      {uploadedTopics.map((topic, index) => (
-                        <div className="uploaded-topic" key={index}>
-                          {topic}
-                        </div>
-                      ))}
+                  {relevantTopics.map((topic, index) => (
+                    <div className="topic" key={index} >
+                      {topic} : {topicDictionary[topic]}
+                      <button className="remove-button" onClick={() => removeTopic(index)}>
+                        X
+                      </button>
                     </div>
-
+                  ))}
                 </div>
               </div>
             </div>
   );
 }
 
-export default App;
+export default WholePage;

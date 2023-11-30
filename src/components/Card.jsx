@@ -7,6 +7,8 @@ const Card = ({ question, topic, defaultAnswer, defaultFeedback, sendScoreToPare
     const [loading, setLoading] = useState(false);
     const [score, setScore] = useState(0);
     const [chat, setChat] = useState(false);
+    const [dataFromPinecone, setDataFromPinecone] = useState("");
+    const [feedbackPrompt, setFeedbackPrompt] = useState("");
 
 
     const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY;
@@ -14,65 +16,81 @@ const Card = ({ question, topic, defaultAnswer, defaultFeedback, sendScoreToPare
     const handleSendDataToParent = () => {
       score ? sendScoreToParent(score) : sendScoreToParent(0);
     }
+    
+    // based on this question, response, and topic, find the relevant information from pinecone
+    const getPineconeSearch = async () => {
+      try {
+        // Fetch data from Pinecone API and update dataFromPinecone state
+        const response = await fetch(`http://localhost:3001/search?text=${encodeURIComponent(question + answer + topic)}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const dataReceived = await response.json();
+  
+        const concatenatedContent = dataReceived
+          .filter(item => item.pageContent)
+          .map(item => item.pageContent.trim().substring(0, 500))
+          .join('... ');
+  
+        // Set dataFromPinecone state after receiving data
+        setDataFromPinecone(concatenatedContent);
+        console.log(concatenatedContent)
+        return concatenatedContent;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
 
     const getFeedback = async () => {
-        setLoading(true);
-        const feedbackPrompt = `
-        I answered the following ${question}.
-        I wrote: ${answer}
+      setLoading(true);
+    
+      try {
+        const pineconeData = await getPineconeSearch();
+        // set an artificial delay after await getPineconeSearch()
+            
+        const newFeedbackPrompt = `
+          I answered the following question: ${question}. The question was about this topic:${childTopic.topic ? childTopic.topic : 'Unknown'}.
+          I wrote: ${answer}
+          Here is some contextual information about the question and answer: ${pineconeData}
+          Please provide feedback on my response based on the contextual information, the question, and the topic.
 
-        You are a gentle, supportive teacher who provides feedback and seeks out what was right about the student's answer.
-        Unless the student was VERY wrong or VERY uncertain, you should assume at least a partially correct answer. 
+          If I wasn't sure or did not know the answer, please provide feedback on how they could have approached the question.
+          Be kind, supportive, and encouraging. Your role is to make sure that I want to try again in the future and keep on learning. 
+          Please encourage me to keep learning and congratulate me on my effort regardless of my response.
+        `;
 
-        The feedback goes as follows:
-
-        First sentence:
-          One sentence on what the user did well. Relate it to ${childTopic}. 5-10 words.
-
-        Second sentence (Optional):
-          One short sentence on what would make a great answer, especially in relation to ${childTopic}. 5-10 words. This is optional and not necessary if the answer is mostly correct.
-
-
-        Example 1: 
-        That is partially correct. It's true that computer science studies computers. Next time, you could elaborate that it studies computation, information, and automation.
-
-        Example 2:
-        It is okay to not know the answer. It's great that you're spending time to learn more! Next time, you could say that computer science studies computation, information, and automation.
-        
-        Example 3: 
-        That is correct! It's great that you identified that computer science studies computation, information, and automation.
-
-        `
-        
-        
-        ;
-
-
+        console.log(newFeedbackPrompt)
+    
+        // Make the API call directly with the constructed feedbackPrompt
         const apiRequestBody = {
-            model: 'gpt-3.5-turbo',
-            messages: [
-                { role: 'system', content: feedbackPrompt },
-            ],
-            temperature: 1.2
+          model: 'gpt-3.5-turbo',
+          messages: [
+            { role: 'system', content: newFeedbackPrompt },
+          ],
+          temperature: 1.2
         };
-
-        try {
-            const response = await fetch('https://api.openai.com/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${REACT_APP_API_KEY}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(apiRequestBody),
-            });
-
-            const data = await response.json();
-            setFeedback(data.choices[0].message.content);
-            setLoading(false);
-        } catch (error) {
-            console.log(error);
-        }
+    
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${REACT_APP_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(apiRequestBody),
+        });
+    
+        const data = await response.json();
+        setFeedback(data.choices[0].message.content);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
     };
+    
   
   const handleScore = (value) => {
       setScore(value);
