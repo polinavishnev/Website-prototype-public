@@ -12,6 +12,8 @@ require('dotenv').config();
 // Create Express app
 const app = express();
 const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY;
+const CLIENT_URL = process.env.NODE_ENV === 'production' ? 'https://fredngo-cp-w103-lab9-client.up.railway.app' : 'http://localhost:3000'
+
 
 
 // Initialize Pinecone client
@@ -38,7 +40,12 @@ const pineconeStore = new PineconeStore(embedder, { pineconeIndex: index, namesp
 // Middleware to parse JSON in requests
 app.use(express.json());
 const cors = require('cors');
-app.use(cors());
+app.use(cors({
+  origin: CLIENT_URL,
+  methods: 'GET,POST,PUT,DELETE,PATCH',
+  credentials: true
+}))
+
 app.use((_req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', '*');
