@@ -4,7 +4,7 @@ const API_KEY = process.env.REACT_APP_API_KEY;
 
 const API_URL =
   process.env.NODE_ENV === "production"
-    ? "https://fredngo-cp-w103-lab9-client.up.railway.app"
+    ? "https://website-prototype-production.up.railway.app"
     : "http://localhost:3001";
 
 function Upload({ onUploadFinish }) {
