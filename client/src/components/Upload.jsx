@@ -2,6 +2,11 @@ import React, { useState } from "react";
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 
+const API_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://fredngo-cp-w103-lab9-client.up.railway.app"
+    : "http://localhost:3001";
+
 function Upload({ onUploadFinish }) {
   const [text, setText] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -16,7 +21,7 @@ function Upload({ onUploadFinish }) {
         const croppedText = text.substring(0, 7000);
         const prompt = `Based on this text, generate a list of 3 specific but overarching topics that would be relevant to be quizzed on in relation to this text. \n\nText: ${croppedText}`;
 
-        const response = await fetch("http://localhost:3001/upload", {
+        const response = await fetch(`${API_URL}/upload`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
