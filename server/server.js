@@ -5,11 +5,15 @@ const express = require("express");
 const { RecursiveCharacterTextSplitter } = require("langchain/text_splitter");
 const { OpenAI } = require("langchain/llms/openai");
 const { VectorDBQAChain } = require("langchain/chains");
+
+// Load environment variables
 require("dotenv").config();
 
 // Create Express app
 const app = express();
 const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY;
+
+// Set client URL based on environment
 const CLIENT_URL =
   process.env.NODE_ENV === "production"
     ? "https://website-prototype-production-cb4c.up.railway.app"
@@ -21,8 +25,10 @@ const pineconeClient = new Pinecone({
   apiKey: process.env.PINECONE_API_KEY,
 });
 
-// Create Pinecone index
+// Select Pinecone index
 const index = pineconeClient.index("app");
+
+// Initialize OpenAI client
 const openai = new OpenAI({
   openAIApiKey: process.env.REACT_APP_API_KEY,
   maxTokens: 500,
@@ -52,6 +58,7 @@ app.use(
   })
 );
 
+// Adjust headers to allow CORS
 app.use((_req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "*");
@@ -71,7 +78,7 @@ app.post("/upload", async (req, res) => {
       (text) => text.pageContent
     );
 
-    // Upload the split text to Pinecone
+    // Upload the split text to Pinecone from client's Upload component
     await PineconeStore.fromTexts(pineconeStoreData, null, embedder, {
       pineconeIndex: index,
       namespace: "langchain",
@@ -83,6 +90,8 @@ app.post("/upload", async (req, res) => {
   }
 });
 
+
+// Route to handle document similarity search from client's Card component
 app.get("/search", async (req, res) => {
   try {
     console.log("Request received:", req.query);
@@ -93,7 +102,7 @@ app.get("/search", async (req, res) => {
       namespace: "langchain",
     });
 
-    /* Search the vector DB independently with meta filters */
+    // Search the vector store for five most similar documents
     const results = await vectorStore.similaritySearch(text, 5);
     console.log(results);
     res.status(200).send([...results]);

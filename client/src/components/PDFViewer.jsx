@@ -1,6 +1,12 @@
 import React from 'react';
 import { Document, Page } from 'react-pdf';
 
+
+/*
+This component is currently not in use.
+Its purpose is to be able to view an uploaded PDF file
+*/
+
 class PDFViewer extends React.Component {
   state = {
     numPages: null,

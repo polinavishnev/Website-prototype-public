@@ -6,6 +6,21 @@ const API_URL =
     ? "https://website-prototype-production.up.railway.app"
     : "http://localhost:3001";
 
+const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY;
+
+/**
+ * Card component represents a question card with answer input, feedback, and self-evaluation options.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.question - The question text.
+ * @param {string} props.topic - The topic related to the question.
+ * @param {string} props.defaultAnswer - The default answer for the question.
+ * @param {string} props.defaultFeedback - The default feedback for the question.
+ * @param {Function} props.sendScoreToParent - The function to send the score to the parent component.
+ * @param {Object} props.childTopic - The child topic related to the question.
+ * @returns {JSX.Element} The rendered Card component.
+ */
 const Card = ({
   question,
   topic,
@@ -22,14 +37,15 @@ const Card = ({
   const [dataFromPinecone, setDataFromPinecone] = useState("");
   const [feedbackPrompt, setFeedbackPrompt] = useState("");
 
-  const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY;
 
   const handleSendDataToParent = () => {
+    // Update the score in the parent component
     score ? sendScoreToParent(score) : sendScoreToParent(0);
   };
 
-  // based on this question, response, and topic, find the relevant information from pinecone
+
   const getPineconeSearch = async () => {
+    // Function to get relevant information from Pinecone API based on question, answer, and topic
     try {
       // Fetch data from Pinecone API and update dataFromPinecone state
       const response = await fetch(
@@ -45,6 +61,7 @@ const Card = ({
       );
       const dataReceived = await response.json();
 
+      // Parse the data received from Pinecone API
       const concatenatedContent = dataReceived
         .filter((item) => item.pageContent)
         .map((item) => item.pageContent.trim().substring(0, 500))
@@ -60,6 +77,8 @@ const Card = ({
   };
 
   const getFeedback = async () => {
+    // Function to get feedback from OpenAI API based on question, answer, topic, and relevant information from Pinecone
+
     setLoading(true);
 
     try {
@@ -103,6 +122,7 @@ const Card = ({
       const data = await response.json();
       setFeedback(data.choices[0].message.content);
       setLoading(false);
+
     } catch (error) {
       console.log(error);
       setLoading(false);
@@ -130,10 +150,13 @@ const Card = ({
 
   // use useeffect to set chat to empty when the question changes
   useEffect(() => {
+    // Turn off the chat when the question or the feedback changes.
+    // The first one is to click through the questions; the second one is to allow new feedback for a new answer to be genrated.
     setChat(false);
   }, [question, feedback]);
 
   useEffect(() => {
+    // Once the score gets updated, send it to the parent component
     handleSendDataToParent();
   }, [score]);
 
@@ -144,13 +167,19 @@ const Card = ({
 
   return (
     <div className="card">
+
       <h2>Question: {question}</h2>
+      
       <textarea
         type="text"
         value={answer}
+        rows="5"
+        cols="50"
         onChange={(e) => setAnswer(e.target.value)}
         placeholder="What do you think is the answer?"
       ></textarea>
+
+
       {loading ? null : (
         <button
           className="get-feedback-button"
@@ -161,6 +190,8 @@ const Card = ({
       )}
       <div className="answer-box">
         {loading ? "Loading..." : <>{feedback}</>}
+
+        {/* Once the feedback is given, allow the user to press a button to activate the chat */}
         {feedback && (
           <>
             <br />
@@ -169,6 +200,8 @@ const Card = ({
             </button>
           </>
         )}
+
+        {/* Once that chat is there, pass the props variables to the Chat component */}
         {chat && (
           <Chat
             question={question}
@@ -178,6 +211,7 @@ const Card = ({
           />
         )}
 
+        {/* Once the feedback is given, allow the user to self-evaluate */}
         {feedback && (
           <div className="self-eval-box">
             <h3>

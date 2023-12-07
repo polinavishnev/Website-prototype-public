@@ -2,14 +2,25 @@ import "./App.css";
 import Card from "./components/Card";
 import Upload from "./components/Upload";
 import { useEffect, useState, useMemo } from "react";
-import PDFViewer from "./components/PDFViewer";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
+const API_URL =
+process.env.NODE_ENV === "production"
+  ? "https://website-prototype-production.up.railway.app"
+  : "http://localhost:3001";
+
+const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY;
+
+
+/**
+ * The main component of the application.
+ * Renders the upload section, question card, and relevant topics sidebar.
+ * Allows users to add relevant topics, answer questions, and provide feedback.
+ *
+ * @component
+ * @returns {JSX.Element} The rendered App component
+ */
 
 function App() {
-  const API_URL =
-    process.env.NODE_ENV === "production"
-      ? "https://website-prototype-production.up.railway.app"
-      : "http://localhost:3001";
 
   const [questions, setQuestions] = useState([]);
   const [relevantTopics, setRelevantTopics] = useState([]);
@@ -21,7 +32,6 @@ function App() {
 
   const num_questions = 5;
 
-  const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY;
 
   const getTopic = () => {
     if (relevantTopics.length === 0) {
@@ -35,12 +45,16 @@ function App() {
   };
 
   const generatedTopics = useMemo(() => {
+    // Creates an array of 'num_questions' length, each element being a memoized result of 'getTopic()'. 
+    // The generatedTopics array gets recomputed when the dependencies change.
     return Array(num_questions)
       .fill(null)
       .map(() => getTopic());
   }, [num_questions, relevantTopics, topicDictionary]);
 
+
   const getQuestions = async () => {
+    // Generate questions using OpenAI API
     setLoading(true);
     const questionPrompts = []; // Store all question prompts
 
@@ -48,6 +62,8 @@ function App() {
     Each question should be formatted to be answered in a few words or a sentence at most.
     `;
     console.log(generatedTopics, "these are the generated topics");
+
+    // Fill the question prompts array with the start prompt and the corresponding prompts for each topic
     questionPrompts.push(startPrompt);
     for (let i = 1; i <= num_questions; i++) {
       const questionTopic = generatedTopics[i - 1]["topic"];
@@ -58,6 +74,7 @@ function App() {
     }
     console.log(questionPrompts);
 
+    // Merge the array into a string to be sent to the API
     const questionPrompt = questionPrompts.join("\n");
 
     const apiRequestBody = {
@@ -80,9 +97,6 @@ function App() {
       );
 
       const data = await response.json();
-      console.log(data);
-
-      const questionContent = data.choices[0].message.content;
       const content = data.choices[0].message.content;
       const all_questions = [];
 
@@ -104,6 +118,8 @@ function App() {
   };
 
   const handleSubmit = (e) => {
+    // Handle the addition of topics through the form on the right sidebar
+
     e.preventDefault();
     if (topic.trim() !== "") {
       setRelevantTopics([...relevantTopics, { topic, score: 0 }]);
@@ -120,18 +136,21 @@ function App() {
   };
 
   const removeTopic = (index) => {
+    // Remove topic from sidebar
     const updatedTopics = relevantTopics.slice();
     updatedTopics.splice(index, 1);
     setRelevantTopics(updatedTopics);
   };
 
   const receiveScoreFromChild = (score) => {
+    // Handle the updating of score for each topic from the Card child component. 
+    // The score is updated after the user selects a button at the bottom of the Card component.
+
     const childTopic = generatedTopics
       ? generatedTopics[questionIndex]
       : "computer science";
 
-    console.log(topicDictionary);
-    console.log(generatedTopics);
+    // Update the score for the topic in the topicDictionary
     setTopicDictionary((prevTopicDict) => {
       if (!prevTopicDict[childTopic] || prevTopicDict[childTopic] === 0) {
         return {
@@ -145,10 +164,11 @@ function App() {
         };
       }
     });
-    console.log(childTopic, score);
   };
+
   const handleUploadFinish = (topics) => {
-    // Add the uploaded topics to relevantTopics with a score of 0
+    // Add the uploaded topics from the Upload component to relevantTopics dictionary
+
     setRelevantTopics((prevTopics) => [
       ...prevTopics,
       ...topics.map((topic) => ({ topic, score: 0 })),
@@ -161,13 +181,19 @@ function App() {
       return newTopicDict;
     });
   };
+
+
   return (
     <div className="whole-page">
+
+    {/* Upload component */}
       <div className="header">
         <Upload onUploadFinish={handleUploadFinish} />
       </div>
 
+    {/* Set of question-answer components. The focus in the Card component.  */}
       <div className="questions-answers">
+        {/* If it's the first question, disable the "previous question" button */}
         {questionIndex === 0 ? (
           <button
             id="disabled"
@@ -207,6 +233,7 @@ function App() {
           )}
         </div>
 
+        {/* If it's the last question, disable the next question button */}
         {questionIndex === questions.length - 1 ? (
           <button
             id="disabled"
@@ -233,7 +260,10 @@ function App() {
         )}
       </div>
 
+    {/* Sidebar for relevant topics */}
       <div className="relevancy-sidebar">
+
+        {/* Form to manually add topics */}
         <form className="relevancy-form" onSubmit={handleSubmit}>
           <textarea
             type="text"
@@ -241,6 +271,8 @@ function App() {
             onChange={(e) => setTopic(e.target.value)}
             placeholder="Add a relevant question or topic"
           ></textarea>
+
+          {/* Disable the form to add topics once the questions have been loaded */}
           {questions.length > 0 ? (
             <button id="disabled" className="add-button" type="submit" disabled>
               Refresh the page to add new topics
@@ -252,6 +284,7 @@ function App() {
           )}
         </form>
 
+        {/* Display the relevant topics */}
         <div className="relevancy-topics">
           {relevantTopics.map((item, index) => (
             <div className="topic" key={index}>
@@ -264,6 +297,8 @@ function App() {
               </button>
             </div>
           ))}
+        
+        {/* Display the uploaded topics */}
           <div className="uploaded-topics-sidebar">
             {uploadedTopics.map((topic, index) => (
               <div className="uploaded-topic" key={index}>
