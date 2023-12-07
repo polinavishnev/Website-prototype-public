@@ -21,8 +21,5 @@ Most notable files and folders:
 - `server.js` : Runs the server
 - `cleanup.js` : Wipes the Pinecone database
 
-**Developing a Product**
-
-Presently, the app comprises a React application hosted on Render and has the capability to send requests to OpenAI.
 
 [Link to Loom Demo](https://www.loom.com/share/c8b3df037a3842ac8ae8a1cb5bd4f684) | [Link to Prototype](https://website-prototype-3.onrender.com/)
