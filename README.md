@@ -22,4 +22,4 @@ Most notable files and folders:
 - `cleanup.js` : Wipes the Pinecone database
 
 
-[Link to Loom Demo](https://www.loom.com/share/c8b3df037a3842ac8ae8a1cb5bd4f684) | [Link to Prototype](https://website-prototype-3.onrender.com/)
+[Link to Loom Demo](https://www.loom.com/share/618f2fb368424a68b3847fb71ab52fad?sid=9a54773f-cea3-4096-b764-9b5d15bcbfd9) | [Link to Prototype](https://website-prototype-production-cb4c.up.railway.app/)
