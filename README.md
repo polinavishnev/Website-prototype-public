@@ -6,7 +6,18 @@ This project is part of the ongoing development of the Discearn Web App, a proje
 
 ### Setup
 
-To run the project locally, clone the repository. Then, open two terminals. 
+To run the project locally, clone the repository. 
+
+You will need to add the following environment variabls to your `.env` file, in each of the `client` and `server` folders:
+
+* `REACT_APP_API_KEY`: OpenAI API key
+* `OPENAI_API_KEY`: OpenAI API key (same value as before, but named differently to be found by the OpenAI API in server.js)
+* `PINECONE_ENVIRONMENT`: Pinecone environment name
+* `PINECONE_API_KEY`: Pinecone API key
+
+The OpenAI API key can be found in your [OpenAI account's API keys section](https://platform.openai.com/account/api-keys). The Pinecone environment name and API key can be found in your organization's [indexes section](https://www.app.pinecone.io).
+
+Then, open two terminals. 
 
 In the first terminal, navigate to the `client` folder and run `npm install` to install the dependencies. Then, run `npm run dev` to start the React app.
 
