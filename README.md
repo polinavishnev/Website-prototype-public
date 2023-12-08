@@ -4,6 +4,16 @@
 
 This project is part of the ongoing development of the Discearn Web App, a project dedicated to improving the online learning experience. The application is designed to provide effective methods for reviewing and synthesizing information from diverse sources. Following an Agile development approach, the project is in its early stages, with ten user interviews completed. The plan is to continue with another cycle of interviews, followed by further development, ensuring that the product aligns with user needs and preferences.
 
+### Setup
+
+To run the project locally, clone the repository. Then, open two terminals. 
+
+In the first terminal, navigate to the `client` folder and run `npm install` to install the dependencies. Then, run `npm run dev` to start the React app.
+
+In the second terminal, navigate to the `server` folder and run `npm install` to install the dependencies. Then, run `npm start` to start the Node server.
+
+The web app should now be running on `localhost:3000`.
+
 
 ### Project Structure
 
