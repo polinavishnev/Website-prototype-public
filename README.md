@@ -1,4 +1,7 @@
-# Capstone Write-up - Discearn Web App
+# Discearn Web App
+
+## Technical Update
+The deployed site currently experiences the OpenAI rate limitation error. I am working on debugging it, but for an example of what the website is intended to work like, please see the Loom Demo below.
 
 ### Introduction
 
