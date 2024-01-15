@@ -1,8 +1,5 @@
 # Text-Based Question and Feedback Generator
 
-## Technical Update
-The deployed site currently experiences the OpenAI rate limitation error. I am working on debugging it, but for an example of what the website is intended to work like, please see the Loom Demo below.
-
 ### Introduction
 
 This project is a web application that allows the user to paste multiple text files, get relevant quiz questions on them, and receive immediate feedback on their understanding. 
