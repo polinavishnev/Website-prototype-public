@@ -1,5 +1,14 @@
 # Text-Based Question and Feedback Generator
 
+
+[Link to Loom Demo](https://www.loom.com/share/618f2fb368424a68b3847fb71ab52fad?sid=9a54773f-cea3-4096-b764-9b5d15bcbfd9) | [Link to Prototype](https://website-prototype-production-cb4c.up.railway.app/)
+
+
+Redesign coming soon!
+
+![Discearn Website_ UI Improvement](https://github.com/polinavishnev/Website-prototype-public/assets/68515140/7f2e8de0-caa6-4368-bb1d-6efe36cae217)
+
+
 ### Introduction
 
 This project is a web application that allows the user to paste multiple text files, get relevant quiz questions on them, and receive immediate feedback on their understanding. 
@@ -42,5 +51,3 @@ Most notable files and folders:
 - `server.js` : Runs the server
 - `cleanup.js` : Wipes the Pinecone database
 
-
-[Link to Loom Demo](https://www.loom.com/share/618f2fb368424a68b3847fb71ab52fad?sid=9a54773f-cea3-4096-b764-9b5d15bcbfd9) | [Link to Prototype](https://website-prototype-production-cb4c.up.railway.app/)
