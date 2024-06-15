@@ -7,7 +7,7 @@ This project is part of the ongoing development of the Discearn Web App, a proje
 ### Setup
 
 #### API Keys
-To get started, you will need to set up an environment and an API key in [Pinecone](https://docs.pinecone.io/guides/get-started/quickstart) and generate an [OpenAI API key](https://platform.openai.com/docs/guides/production-best-practices/api-keys).
+To get started, you will need to set up an environment and an API key in [Pinecone](https://docs.pinecone.io/guides/get-started/quickstart) and generate an [OpenAI API key](https://platform.openai.com/docs/guides/production-best-practices/api-keys). Please add those to the `.env` file. The OpenAI API key will be also used for the REACT_APP_API_KEY. 
 
 
 #### Running the Project
