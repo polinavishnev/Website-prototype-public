@@ -6,6 +6,12 @@ This project is part of the ongoing development of the Discearn Web App, a proje
 
 ### Setup
 
+#### API Keys
+To get started, you will need to set up an environment and an API key in [Pinecone](https://docs.pinecone.io/guides/get-started/quickstart) and generate an [OpenAI API key](https://platform.openai.com/docs/guides/production-best-practices/api-keys).
+
+
+#### Running the Project
+
 To run the project locally, clone the repository. Then, open two terminals. 
 
 In the first terminal, navigate to the `client` folder and run `npm install` to install the dependencies. Then, run `npm run dev` to start the React app.
