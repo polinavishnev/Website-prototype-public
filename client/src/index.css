@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  font-family: 'Mulish', sans-serif;
+
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.button {
+  padding: 0.5rem;
+  font-weight: bold;
+  background: #5c95ffff;
+  color: white;
+  border-radius: 5px;
+  cursor: default;
+}

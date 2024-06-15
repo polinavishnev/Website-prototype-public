@@ -1,0 +1,17 @@
+Revert "Removed environment variables and added instructions on how to obtain them." Accidentally pushed a public version of the repository without .env variables into the private one.
+
+This reverts commit 212cf9ee6889097d513f1bedef5874f4020ca42f.
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch main
+# Your branch is up to date with 'origin/main'.
+#
+# Changes to be committed:
+#	modified:   .env
+#	modified:   README.md
+
+
+
+ 
