@@ -1,4 +1,4 @@
-# Capstone Write-up - Discearn Web App
+# Senior Thesis README.md - Discearn Web App
 
 ### Introduction
 
