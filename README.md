@@ -2,7 +2,7 @@
 
 ### Introduction
 
-This repository is part of the ongoing development of the Discearn Web App, a project dedicated to improving the online learning experience. The application is designed to provide effective methods for reviewing and synthesizing information from diverse sources. Following an Agile development approach, the project is in its early stages, with ten user interviews completed. The plan is to continue with another cycle of interviews, followed by further development, ensuring that the product aligns with user needs and preferences.
+This repository is part of the ongoing development of the Discearn Web App, a project dedicated to improving the online learning experience. The application is designed to provide effective methods for reviewing and synthesizing information from diverse sources. Following an Agile development approach, the project has completed three iterations (25+ user interviews).
 
 ### Setup
 
@@ -43,4 +43,4 @@ Most notable files and folders:
 - `cleanup.js` : Wipes the Pinecone database
 
 
-[Link to Loom Demo](https://www.loom.com/share/3ce56970548c4503a4578733a0dbbaa9?sid=77ed10b2-5243-4a9f-8f86-2c0eac2dde18) | [Link to Prototype](https://website-prototype-production-cb4c.up.railway.app/)
+[Link to Loom Demo](https://www.loom.com/share/3ce56970548c4503a4578733a0dbbaa9?sid=77ed10b2-5243-4a9f-8f86-2c0eac2dde18) 
